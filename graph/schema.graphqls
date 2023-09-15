@@ -1,28 +1,16 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
-type Todo {
+type Perspective {
   id: ID!
   text: String!
-  done: Boolean!
-  user: User!
-}
-
-type User {
-  id: ID!
-  name: String!
 }
 
 type Query {
-  todos: [Todo!]!
+  perspectives: [Perspective!]!
 }
 
-input NewTodo {
+input NewPerspective {
   text: String!
-  userId: String!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  createPerspective(input: NewPerspective!): Perspective!
 }

@@ -6,18 +6,24 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"review-pull-request-back-end/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// CreatePerspective is the resolver for the createPerspective field.
+func (r *mutationResolver) CreatePerspective(ctx context.Context, input model.NewPerspective) (*model.Perspective, error) {
+	var perspective model.Perspective
+	perspective.Text = input.Text
+	return &perspective, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Perspectives is the resolver for the perspectives field.
+func (r *queryResolver) Perspectives(ctx context.Context) ([]*model.Perspective, error) {
+	var perspectives []*model.Perspective
+	dummyPerspective := model.Perspective{
+		Text: "text",
+	}
+	perspectives = append(perspectives, &dummyPerspective)
+	return perspectives, nil
 }
 
 // Mutation returns MutationResolver implementation.
