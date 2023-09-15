@@ -1,5 +1,8 @@
 run:
 	go run server.go
 
-generate:
+gql-gen:
 	go run github.com/99designs/gqlgen generate
+
+sqlboiler:
+	sqlboiler --wipe psql
