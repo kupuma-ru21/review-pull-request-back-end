@@ -13,9 +13,9 @@ type perspectiveService struct {
 	exec boil.ContextExecutor
 }
 
-func (u *perspectiveService) CreatePerspective(ctx context.Context, input model.NewPerspective) (*model.Perspective, error) {
+func (p *perspectiveService) CreatePerspective(ctx context.Context, input model.NewPerspective) (*model.Perspective, error) {
 	newPerspective := db.Perspective{Text: input.Text}
-	err := newPerspective.Insert(ctx, u.exec, boil.Infer())
+	err := newPerspective.Insert(ctx, p.exec, boil.Infer())
 	if err != nil {
 		return nil, err
 	}
