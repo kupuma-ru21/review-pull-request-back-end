@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.37
 	github.com/friendsofgo/errors v0.9.2
 	github.com/lib/pq v1.10.6
+	github.com/rs/cors v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.9
 	github.com/volatiletech/sqlboiler/v4 v4.15.0
 	github.com/volatiletech/strmangle v0.0.5
