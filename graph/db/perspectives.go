@@ -23,7 +23,7 @@ import (
 
 // Perspective is an object representing the database table.
 type Perspective struct {
-	ID   string `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID   int    `boil:"id" json:"id" toml:"id" yaml:"id"`
 	Text string `boil:"text" json:"text" toml:"text" yaml:"text"`
 
 	R *perspectiveR `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -47,6 +47,29 @@ var PerspectiveTableColumns = struct {
 }
 
 // Generated where
+
+type whereHelperint struct{ field string }
+
+func (w whereHelperint) EQ(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperint) NEQ(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperint) LT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperint) LTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperint) GT(x int) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperint) GTE(x int) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+func (w whereHelperint) IN(slice []int) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperint) NIN(slice []int) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
 
 type whereHelperstring struct{ field string }
 
@@ -76,10 +99,10 @@ func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 }
 
 var PerspectiveWhere = struct {
-	ID   whereHelperstring
+	ID   whereHelperint
 	Text whereHelperstring
 }{
-	ID:   whereHelperstring{field: "\"perspectives\".\"id\""},
+	ID:   whereHelperint{field: "\"perspectives\".\"id\""},
 	Text: whereHelperstring{field: "\"perspectives\".\"text\""},
 }
 
@@ -101,10 +124,10 @@ type perspectiveL struct{}
 
 var (
 	perspectiveAllColumns            = []string{"id", "text"}
-	perspectiveColumnsWithoutDefault = []string{"id", "text"}
-	perspectiveColumnsWithDefault    = []string{}
+	perspectiveColumnsWithoutDefault = []string{"text"}
+	perspectiveColumnsWithDefault    = []string{"id"}
 	perspectivePrimaryKeyColumns     = []string{"id"}
-	perspectiveGeneratedColumns      = []string{}
+	perspectiveGeneratedColumns      = []string{"id"}
 )
 
 type (
@@ -398,7 +421,7 @@ func Perspectives(mods ...qm.QueryMod) perspectiveQuery {
 
 // FindPerspective retrieves a single record by ID with an executor.
 // If selectCols is empty Find will return all columns.
-func FindPerspective(ctx context.Context, exec boil.ContextExecutor, iD string, selectCols ...string) (*Perspective, error) {
+func FindPerspective(ctx context.Context, exec boil.ContextExecutor, iD int, selectCols ...string) (*Perspective, error) {
 	perspectiveObj := &Perspective{}
 
 	sel := "*"
@@ -453,6 +476,7 @@ func (o *Perspective) Insert(ctx context.Context, exec boil.ContextExecutor, col
 			perspectiveColumnsWithoutDefault,
 			nzDefaults,
 		)
+		wl = strmangle.SetComplement(wl, perspectiveGeneratedColumns)
 
 		cache.valueMapping, err = queries.BindMapping(perspectiveType, perspectiveMapping, wl)
 		if err != nil {
@@ -523,6 +547,7 @@ func (o *Perspective) Update(ctx context.Context, exec boil.ContextExecutor, col
 			perspectiveAllColumns,
 			perspectivePrimaryKeyColumns,
 		)
+		wl = strmangle.SetComplement(wl, perspectiveGeneratedColumns)
 
 		if !columns.IsWhitelist() {
 			wl = strmangle.SetComplement(wl, []string{"created_at"})
@@ -692,6 +717,9 @@ func (o *Perspective) Upsert(ctx context.Context, exec boil.ContextExecutor, upd
 			perspectiveAllColumns,
 			perspectivePrimaryKeyColumns,
 		)
+
+		insert = strmangle.SetComplement(insert, perspectiveGeneratedColumns)
+		update = strmangle.SetComplement(update, perspectiveGeneratedColumns)
 
 		if updateOnConflict && len(update) == 0 {
 			return errors.New("db: unable to upsert perspectives, could not build update column list")
@@ -897,7 +925,7 @@ func (o *PerspectiveSlice) ReloadAll(ctx context.Context, exec boil.ContextExecu
 }
 
 // PerspectiveExists checks if the Perspective row exists.
-func PerspectiveExists(ctx context.Context, exec boil.ContextExecutor, iD string) (bool, error) {
+func PerspectiveExists(ctx context.Context, exec boil.ContextExecutor, iD int) (bool, error) {
 	var exists bool
 	sql := "select exists(select 1 from \"perspectives\" where \"id\"=$1 limit 1)"
 
