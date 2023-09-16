@@ -23,22 +23,27 @@ import (
 
 // Perspective is an object representing the database table.
 type Perspective struct {
-	ID string `boil:"id" json:"id" toml:"id" yaml:"id"`
+	ID   string `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Text string `boil:"text" json:"text" toml:"text" yaml:"text"`
 
 	R *perspectiveR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L perspectiveL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var PerspectiveColumns = struct {
-	ID string
+	ID   string
+	Text string
 }{
-	ID: "id",
+	ID:   "id",
+	Text: "text",
 }
 
 var PerspectiveTableColumns = struct {
-	ID string
+	ID   string
+	Text string
 }{
-	ID: "perspectives.id",
+	ID:   "perspectives.id",
+	Text: "perspectives.text",
 }
 
 // Generated where
@@ -71,9 +76,11 @@ func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 }
 
 var PerspectiveWhere = struct {
-	ID whereHelperstring
+	ID   whereHelperstring
+	Text whereHelperstring
 }{
-	ID: whereHelperstring{field: "\"perspectives\".\"id\""},
+	ID:   whereHelperstring{field: "\"perspectives\".\"id\""},
+	Text: whereHelperstring{field: "\"perspectives\".\"text\""},
 }
 
 // PerspectiveRels is where relationship names are stored.
@@ -93,8 +100,8 @@ func (*perspectiveR) NewStruct() *perspectiveR {
 type perspectiveL struct{}
 
 var (
-	perspectiveAllColumns            = []string{"id"}
-	perspectiveColumnsWithoutDefault = []string{"id"}
+	perspectiveAllColumns            = []string{"id", "text"}
+	perspectiveColumnsWithoutDefault = []string{"id", "text"}
 	perspectiveColumnsWithDefault    = []string{}
 	perspectivePrimaryKeyColumns     = []string{"id"}
 	perspectiveGeneratedColumns      = []string{}
