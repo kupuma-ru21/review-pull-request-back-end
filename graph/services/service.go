@@ -9,6 +9,7 @@ import (
 
 type PerspectiveService interface {
 	CreatePerspective(ctx context.Context, input model.NewPerspective) (*model.Perspective, error)
+	QueryPerspectives(ctx context.Context) ([]*model.Perspective, error)
 }
 
 type Services interface {

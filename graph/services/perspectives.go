@@ -6,6 +6,7 @@ import (
 	"review-pull-request-back-end/graph/model"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 )
 
 type perspectiveService struct {
@@ -23,4 +24,26 @@ func (u *perspectiveService) CreatePerspective(ctx context.Context, input model.
 		ID:   newPerspective.ID,
 		Text: input.Text,
 	}, nil
+}
+
+func (p *perspectiveService) QueryPerspectives(ctx context.Context) ([]*model.Perspective, error) {
+	dbPerspectives, err := db.Perspectives(
+		qm.Select(
+			db.PerspectiveColumns.ID,
+			db.PerspectiveColumns.Text,
+		)).All(ctx, p.exec)
+	if err != nil {
+		return nil, err
+	}
+
+	var perspectives []*model.Perspective
+	for _, dbPerspective := range dbPerspectives {
+		link := &model.Perspective{
+			ID:   dbPerspective.ID,
+			Text: dbPerspective.Text,
+		}
+		perspectives = append(perspectives, link)
+	}
+
+	return perspectives, nil
 }
