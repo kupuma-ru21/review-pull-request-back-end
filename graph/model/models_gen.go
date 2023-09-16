@@ -7,6 +7,6 @@ type NewPerspective struct {
 }
 
 type Perspective struct {
-	ID   string `json:"id"`
+	ID   int    `json:"id"`
 	Text string `json:"text"`
 }

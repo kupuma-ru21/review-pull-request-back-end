@@ -4,7 +4,6 @@ import (
 	"context"
 	"review-pull-request-back-end/graph/db"
 	"review-pull-request-back-end/graph/model"
-	"strconv"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
@@ -21,7 +20,7 @@ func (u *perspectiveService) CreatePerspective(ctx context.Context, input model.
 	}
 
 	return &model.Perspective{
-		ID:   strconv.Itoa(newPerspective.ID),
+		ID:   newPerspective.ID,
 		Text: input.Text,
 	}, nil
 }
