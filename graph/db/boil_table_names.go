@@ -4,7 +4,9 @@
 package db
 
 var TableNames = struct {
-	Perspectives string
+	Perspectives     string
+	SchemaMigrations string
 }{
-	Perspectives: "perspectives",
+	Perspectives:     "perspectives",
+	SchemaMigrations: "schema_migrations",
 }

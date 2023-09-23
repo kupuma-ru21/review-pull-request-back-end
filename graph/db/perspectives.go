@@ -23,27 +23,27 @@ import (
 
 // Perspective is an object representing the database table.
 type Perspective struct {
-	ID   int    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Text string `boil:"text" json:"text" toml:"text" yaml:"text"`
+	ID          int    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Perspective string `boil:"perspective" json:"perspective" toml:"perspective" yaml:"perspective"`
 
 	R *perspectiveR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L perspectiveL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var PerspectiveColumns = struct {
-	ID   string
-	Text string
+	ID          string
+	Perspective string
 }{
-	ID:   "id",
-	Text: "text",
+	ID:          "id",
+	Perspective: "perspective",
 }
 
 var PerspectiveTableColumns = struct {
-	ID   string
-	Text string
+	ID          string
+	Perspective string
 }{
-	ID:   "perspectives.id",
-	Text: "perspectives.text",
+	ID:          "perspectives.id",
+	Perspective: "perspectives.perspective",
 }
 
 // Generated where
@@ -99,11 +99,11 @@ func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 }
 
 var PerspectiveWhere = struct {
-	ID   whereHelperint
-	Text whereHelperstring
+	ID          whereHelperint
+	Perspective whereHelperstring
 }{
-	ID:   whereHelperint{field: "\"perspectives\".\"id\""},
-	Text: whereHelperstring{field: "\"perspectives\".\"text\""},
+	ID:          whereHelperint{field: "\"perspectives\".\"id\""},
+	Perspective: whereHelperstring{field: "\"perspectives\".\"perspective\""},
 }
 
 // PerspectiveRels is where relationship names are stored.
@@ -123,11 +123,11 @@ func (*perspectiveR) NewStruct() *perspectiveR {
 type perspectiveL struct{}
 
 var (
-	perspectiveAllColumns            = []string{"id", "text"}
-	perspectiveColumnsWithoutDefault = []string{"text"}
+	perspectiveAllColumns            = []string{"id", "perspective"}
+	perspectiveColumnsWithoutDefault = []string{"perspective"}
 	perspectiveColumnsWithDefault    = []string{"id"}
 	perspectivePrimaryKeyColumns     = []string{"id"}
-	perspectiveGeneratedColumns      = []string{"id"}
+	perspectiveGeneratedColumns      = []string{}
 )
 
 type (
@@ -476,7 +476,6 @@ func (o *Perspective) Insert(ctx context.Context, exec boil.ContextExecutor, col
 			perspectiveColumnsWithoutDefault,
 			nzDefaults,
 		)
-		wl = strmangle.SetComplement(wl, perspectiveGeneratedColumns)
 
 		cache.valueMapping, err = queries.BindMapping(perspectiveType, perspectiveMapping, wl)
 		if err != nil {
@@ -547,7 +546,6 @@ func (o *Perspective) Update(ctx context.Context, exec boil.ContextExecutor, col
 			perspectiveAllColumns,
 			perspectivePrimaryKeyColumns,
 		)
-		wl = strmangle.SetComplement(wl, perspectiveGeneratedColumns)
 
 		if !columns.IsWhitelist() {
 			wl = strmangle.SetComplement(wl, []string{"created_at"})
@@ -717,9 +715,6 @@ func (o *Perspective) Upsert(ctx context.Context, exec boil.ContextExecutor, upd
 			perspectiveAllColumns,
 			perspectivePrimaryKeyColumns,
 		)
-
-		insert = strmangle.SetComplement(insert, perspectiveGeneratedColumns)
-		update = strmangle.SetComplement(update, perspectiveGeneratedColumns)
 
 		if updateOnConflict && len(update) == 0 {
 			return errors.New("db: unable to upsert perspectives, could not build update column list")

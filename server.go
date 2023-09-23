@@ -11,6 +11,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 )
@@ -24,8 +25,13 @@ func main() {
 	}
 
 	// connect to db
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		"localhost", 5434, "user", "dbpass", "review_pull_request",
+		os.Getenv("POSTGRES_HOST"), 5434, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PW"), os.Getenv("POSTGRES_DB"),
 	)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
