@@ -42,9 +42,14 @@ func main() {
 	}
 	defer db.Close()
 
-	m, err := migrate.New(
-		"file://db/migrations",
-		"postgres://user:dbpass@localhost:5434/review_pull_request?sslmode=disable")
+	migrationInfo := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PW"),
+		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"),
+		os.Getenv("POSTGRES_DB"),
+	)
+
+	m, err := migrate.New("file://db/migrations", migrationInfo)
 	if err != nil {
 		log.Fatal(err)
 	}
