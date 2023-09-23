@@ -11,6 +11,9 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
@@ -38,6 +41,16 @@ func main() {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	m, err := migrate.New(
+		"file://db/migrations",
+		"postgres://user:dbpass@localhost:5434/review_pull_request?sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := m.Up(); err != nil {
+		log.Fatal(err)
+	}
 
 	service := services.New(db)
 
