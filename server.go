@@ -31,7 +31,7 @@ func main() {
 	}
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("POSTGRES_HOST"), 5434, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PW"), os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_HOST"), 5432, os.Getenv("POSTGRES_USER"), os.Getenv("POSTGRES_PW"), os.Getenv("POSTGRES_DB"),
 	)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
