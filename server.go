@@ -10,10 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 )
 
@@ -33,7 +30,7 @@ func main() {
 
 	database := db.Open()
 	defer database.Close()
-	db.Migrate()
+	db.Migrate(database)
 
 	service := services.New(database)
 
