@@ -14,7 +14,7 @@ type perspectiveService struct {
 }
 
 func (p *perspectiveService) CreatePerspective(ctx context.Context, input model.NewPerspective) (*model.Perspective, error) {
-	newPerspective := db.Perspective{Text: input.Text}
+	newPerspective := db.Perspective{Perspective: input.Text}
 	err := newPerspective.Insert(ctx, p.exec, boil.Infer())
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (p *perspectiveService) QueryPerspectives(ctx context.Context) ([]*model.Pe
 	dbPerspectives, err := db.Perspectives(
 		qm.Select(
 			db.PerspectiveColumns.ID,
-			db.PerspectiveColumns.Text,
+			db.PerspectiveColumns.Perspective,
 		)).All(ctx, p.exec)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (p *perspectiveService) QueryPerspectives(ctx context.Context) ([]*model.Pe
 	for _, dbPerspective := range dbPerspectives {
 		link := &model.Perspective{
 			ID:   dbPerspective.ID,
-			Text: dbPerspective.Text,
+			Text: dbPerspective.Perspective,
 		}
 		perspectives = append(perspectives, link)
 	}

@@ -1,16 +1,18 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"review-pull-request-back-end/db"
 	"review-pull-request-back-end/graph"
 	"review-pull-request-back-end/graph/services"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 )
@@ -24,16 +26,16 @@ func main() {
 	}
 
 	// connect to db
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		"localhost", 5434, "user", "dbpass", "review_pull_request",
-	)
-	db, err := sql.Open("postgres", psqlInfo)
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
-	defer db.Close()
 
-	service := services.New(db)
+	database := db.Open()
+	defer database.Close()
+	db.Migrate()
+
+	service := services.New(database)
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		Srv: service,
